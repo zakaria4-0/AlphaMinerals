@@ -14,6 +14,7 @@ public class ProductionNC {
     private String date;
     private LocalTime heure;
 
+
     public ProductionNC() {
     }
 
@@ -22,7 +23,10 @@ public class ProductionNC {
         this.code_article = code_article;
         this.date = date;
         this.heure = heure;
+
     }
+
+
 
     public int getID() {
         return ID;

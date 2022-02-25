@@ -4,12 +4,10 @@ import Dashboard.AlphaMinerals.DTO.Response;
 import Dashboard.AlphaMinerals.Model.Production;
 import Dashboard.AlphaMinerals.Model.ProductionNC;
 import Dashboard.AlphaMinerals.Service.Service;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Time;
 import java.text.DecimalFormat;
@@ -30,29 +28,28 @@ public class Controller {
         this.service = service;
     }
 
-    @GetMapping("/efficiencyppm1")
-    public ResponseEntity<Response> efficiencyppm1(){
-        DateTimeFormatter time = DateTimeFormatter.ofPattern("HH:mm:ss");
+    @GetMapping("/efficiencyppm1/{date}")
+    public ResponseEntity<Response> efficiencyppm1(@PathVariable("date") String date){
         LocalTime now=LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
         Response response=new Response();
-        List<Production> ListProduct=service.getProductionByDateAndHeure("2021-03-01",now);
-        List<ProductionNC> ListProductnc=service.getProductionNCByDateAndHeure("2021-03-01",now);
+        List<Production> ListProduct=service.getProductionByDateAndHeure(date,now);
+        List<ProductionNC> ListProductnc=service.getProductionNCByDateAndHeure(date,now);
 
-            List<Integer> maxId =new ArrayList<Integer>();
+            List<Integer> maxId =new ArrayList<>();
         int max=0;
-        if(!ListProduct.isEmpty()){
+        if(!ListProduct.isEmpty() ){
             for (int i=0;i<ListProduct.size();i++){
                 maxId.add(ListProduct.get(i).getID());
             }
             max= Collections.max(maxId);
             Production product=service.getProductionByID(max);
-            float efficiency=(float) 100*(product.getID())/900;
+            float efficiency=(float) 100*(product.getID()-ListProduct.get(0).getID()+1)/900;
             response.setEfficiency(efficiency);
         }else {
             response.setEfficiency(0);
         }
 
-        List<Integer> maxId2=new ArrayList<Integer>();
+        List<Integer> maxId2=new ArrayList<>();
         int max2=0;
         if (!ListProductnc.isEmpty()){
             for (int i=0;i<ListProductnc.size();i++){
@@ -60,7 +57,7 @@ public class Controller {
             }
             max2= Collections.max(maxId2);
             ProductionNC productnc=service.getProductionNCByID(max2);
-            float PPM=(float) 1000000*(productnc.getID())/900;
+            float PPM=(float) 1000000*(productnc.getID()-ListProductnc.get(0).getID()+1)/900;
             response.setPPM(PPM);
         }else {
             response.setPPM(0);
@@ -68,19 +65,19 @@ public class Controller {
         return new ResponseEntity(response,HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/products1")
-    public ResponseEntity<List<Production>> chart(){
+    @GetMapping("/products1/{date}")
+    public ResponseEntity<List<Production>> chart(@PathVariable String date){
         LocalTime now=LocalTime.now();
 
-        List<Production> ListProduct=service.getProductionByDateAndHeure("2021-03-01",now);
+        List<Production> ListProduct=service.getProductionByDateAndHeure(date,now);
 
         return new ResponseEntity<>(ListProduct,HttpStatus.OK);
     }
-    @GetMapping("/productsNC1")
-    public ResponseEntity<List<ProductionNC>> chartNC(){
+    @GetMapping("/productsNC1/{date}")
+    public ResponseEntity<List<ProductionNC>> chartNC(@PathVariable String date){
         LocalTime now=LocalTime.now();
 
-        List<ProductionNC> ListProductnc=service.getProductionNCByDateAndHeure("2021-03-01",now);
+        List<ProductionNC> ListProductnc=service.getProductionNCByDateAndHeure(date,now);
 
         return new ResponseEntity<>(ListProductnc,HttpStatus.OK);
     }

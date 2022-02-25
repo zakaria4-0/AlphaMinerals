@@ -45,4 +45,5 @@ public class Service {
     public List<ProductionNC> getProductionNCByDateAndHeure(String s, LocalTime now) {
         return productionNCRepo.findProductionNCByDateAndHeure2(s,now);
     }
+
 }

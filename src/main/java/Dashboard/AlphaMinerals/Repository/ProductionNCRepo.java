@@ -1,5 +1,6 @@
 package Dashboard.AlphaMinerals.Repository;
 
+import Dashboard.AlphaMinerals.Model.Production;
 import Dashboard.AlphaMinerals.Model.ProductionNC;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,4 +14,6 @@ public interface ProductionNCRepo extends JpaRepository<ProductionNC,Integer> {
 
     @Query("SELECT p From ProductionNC p WHERE p.date= :date AND p.heure <= :timeNow ")
     List<ProductionNC> findProductionNCByDateAndHeure2(@Param("date") String s,@Param("timeNow") LocalTime now);
+
+
 }

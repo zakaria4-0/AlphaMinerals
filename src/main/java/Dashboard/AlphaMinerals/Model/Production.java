@@ -13,6 +13,7 @@ public class Production {
     private String date;
     private LocalTime heure;
 
+
     public Production() {
     }
 
@@ -21,7 +22,10 @@ public class Production {
         this.code_article = code_article;
         this.date = date;
         this.heure = heure;
+
     }
+
+
 
     public int getID() {
         return ID;
